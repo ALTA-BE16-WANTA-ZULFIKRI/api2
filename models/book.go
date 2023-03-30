@@ -10,8 +10,8 @@ type BookModel struct {
 	db *gorm.DB
 }
 
-func (um BookModel) SetDBB(db *gorm.DB) {
-	um.db = db
+func (bm BookModel) SetDBB(db *gorm.DB) {
+       bm.db = db
 }
 
 func (bm BookModel) Insert(newBook Book) (Book, error) {

@@ -30,3 +30,7 @@ type Response struct {
 	Data    interface{} `json:"data"`
 }
 
+type Keys struct {
+	gorm.Model
+	Key string
+}
