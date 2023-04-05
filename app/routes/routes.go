@@ -22,4 +22,6 @@ func Route(e *echo.Echo, uc user.Handler, bc book.Handler) {
 
 
 	e.POST("/books", bc.AddBook(), middleware.JWT([]byte("s3cr3t!!")))
+
+	e.POST("/book", bc )
 }	

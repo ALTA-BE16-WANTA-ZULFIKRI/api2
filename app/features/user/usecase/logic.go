@@ -3,6 +3,7 @@ package usecase
 import (
 	"belajar-api/app/features/user"
 	"errors"
+	"strings"
 
 	"github.com/labstack/gommon/log"
 )
@@ -21,6 +22,11 @@ func New(r user.Repository) user.UseCase {
 func (ul *UserLogic) Login(hp string, password string) (user.Core, error) {
 	result, err := ul.m.Login(hp, password)
 	if err != nil {
+		if strings.Contains(err.Error(), "tidak ditemukan") {
+			return user.Core{}, errors.New("data tidak ditemukan")
+		} else if strings.Contains(err.Error(), "salah") {
+			return user.Core{}, errors.New("password salah")
+		}
 		return user.Core{}, errors.New("terdapat permasalahan pada server")
 	}
 
