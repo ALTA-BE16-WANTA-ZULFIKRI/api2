@@ -1,10 +1,15 @@
-package main
+package main 
 
 import (
+	bhandle "belajar-api/app/features/book/handler"
+	brepo "belajar-api/app/features/book/repository"
+	blogic "belajar-api/app/features/book/usecase"
+	uhandle "belajar-api/app/features/user/handler"
+	urepo "belajar-api/app/features/user/repository"
+	ulogic "belajar-api/app/features/user/usecase"
+
+	"belajar-api/app/routes"
 	"belajar-api/config"
-	"belajar-api/controller"
-	"belajar-api/models"
-	"belajar-api/routes"
 
 	"github.com/labstack/echo/v4"
 )
@@ -12,22 +17,19 @@ import (
 func main() {
 	e := echo.New()
 	cfg := config.InitSQL()
-	cfg.AutoMigrate(models.User{})
-	cfg.AutoMigrate(models.Book{})
+	cfg.AutoMigrate(urepo.User{})
+	cfg.AutoMigrate(brepo.Book{})
 
-	mdl := models.UserModel{}
-	mdl.SetDB(cfg)
+	mdl := urepo.New(cfg)
+	srv := ulogic.New(mdl)
+	ctl := uhandle.New(srv)
 
-	bookMdl := models.BookModel{}
-	bookMdl.SetDBB(cfg)
-	bookCtl := controller.BookController{}
-	bookCtl.SetModel(bookMdl)
-	bookCt2 := controller.UserController{}
-	bookCt2.SetModel(mdl)
+	bookMdl := brepo.New(cfg)
+	bookSrv := blogic.New(bookMdl)
+	bookCtl := bhandle.New(bookSrv)
 
-	// ROUTING
-	routes.Route(e,bookCt2,bookCtl)
+	// ROUTING 
+	routes.Route(e, ctl, bookCtl)
 
-	// start server
-	e.Logger.Fatal(e.Start(":1323"))
+	e.Start(":8000")
 }
